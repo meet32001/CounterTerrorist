@@ -1,0 +1,72 @@
+* {
+  box-sizing: border-box;
+}
+@font-face {
+  font-family: myFirstFont;
+  src: url(../asset/ModernWarfare-8MM6z.ttf);
+}
+
+body {
+  background-color: black;
+  font-family: myFirstFont;
+  overflow: hidden;
+}
+
+.StartPageDiv {
+  /* border: 2px solid red; */
+  width: 100%;
+  height: 72.6rem;
+  background-image: url("../asset/photo-1595472968262-48209bf5b390.jpeg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  font-size: 10rem;
+  color: white;
+  opacity: 0.5;
+  margin-top: 23rem;
+  margin-left: 18rem;
+}
+
+.button {
+  width: 30rem;
+  height: 4.5rem;
+  padding: 10px 20px;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: 2px solid #333;
+  border-radius: 5px;
+  background-color: #eee;
+  color: #333;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  margin-top: 7rem;
+  margin-left: 53rem;
+}
+
+.button:hover {
+  background-color: #333;
+  color: #fff;
+  border-color: #fff;
+}
+
+.loading-bar {
+  /* border: 2px solid red; */
+  width: 1rem;
+  height: 10px;
+  background-color: #ddd;
+  margin-top: 10px;
+  visibility: hidden; /* Initially hidden */
+  transition: width 3s linear; /* CSS transition for smooth width change */
+  margin-top: 12rem;
+  margin-left: 31rem;
+}
+
+.loading-bar.loading {
+  width: 50%; /* Make the loading bar fully loaded */
+}
