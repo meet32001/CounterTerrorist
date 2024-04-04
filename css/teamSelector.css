@@ -73,7 +73,7 @@ body {
   height: 45rem;
 }
 
-.autobtn {
+#autobtn {
   position: absolute;
   top: 87%;
   left: 37%;

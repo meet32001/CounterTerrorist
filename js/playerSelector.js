@@ -1,21 +1,37 @@
-// document.addEventListener("DOMContentLoaded", function () {
-//   // Replace 'en' with the desired language
-//   var nameurl = "https://randomuser.me/api/";
-//   var agenturl = "https://bymykel.github.io/CSGO-API/api/en/agents.json";
+document.addEventListener("DOMContentLoaded", function () {
+  var clickedDivId = localStorage.getItem('clickedDivId');
+    console.log(clickedDivId);
 
-//   //Start of PlayerSelector Div
-//   var PlayerSelector = document.createElement("div");
-//   PlayerSelector.classList.add("PlayerSelector");
-//   document.body.append(PlayerSelector);
+  var backgroundAudio = document.createElement("audio");
+  backgroundAudio.setAttribute("autoplay", "");
+  backgroundAudio.setAttribute("id", "backgroundAudio");
+  backgroundAudio.loop = true;
 
-//   // fetch(nameurl)
-//   //   .then((response) => response.json()) // Parse the data as JSON
-//   //   .then((data) => {
-//   //     console.log(data); // Do something with the data
-//   //   })
-//   //   .catch((error) => {
-//   //     console.error("Error:", error); // Handle any errors
-//   //   });
+  var source = document.createElement("source");
+  source.setAttribute(
+    "src",
+    "../asset/02 Counter-Strike - Global Offensive Theme 2.mp3"
+  );
+  backgroundAudio.appendChild(source);
+  document.body.appendChild(backgroundAudio);
+
+  // Replace 'en' with the desired language
+  var nameurl = "https://randomuser.me/api/";
+  var agenturl = "https://bymykel.github.io/CSGO-API/api/en/agents.json";
+
+  //Start of PlayerSelector Div
+  var PlayerSelector = document.createElement("div");
+  PlayerSelector.classList.add("PlayerSelector");
+  document.body.append(PlayerSelector);
+
+  // fetch(nameurl)
+  //   .then((response) => response.json()) // Parse the data as JSON
+  //   .then((data) => {
+  //     console.log(data); // Do something with the data
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error:", error); // Handle any errors
+  //   });
 
 //   fetch(agenturl)
 //     .then((response) => response.json()) // Parse the data as JSON
@@ -32,7 +48,7 @@
 //         var player = document.createElement("div");
 //         player.classList.add("player");
 //         PlayerSelector.appendChild(player);
-        
+
 //         // Create an img element and set its src attribute to the image URL
 //         var img = document.createElement("img");
 //         img.src = data[i].image;
@@ -44,5 +60,4 @@
 //     .catch((error) => {
 //       console.error("Error:", error); // Handle any errors
 //     });
-
-// });
+});

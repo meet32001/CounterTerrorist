@@ -1,4 +1,16 @@
 /* Start of PlayerSelector css */
+@font-face {
+  font-family: myFirstFont;
+  src: url(../asset/ModernWarfare-8MM6z.ttf);
+}
+
+body {
+  background-color: black;
+  font-family: myFirstFont;
+  width: 100%;
+  height: 72.3rem;
+  position: relative;
+}
 
 .PlayerSelector {
   border: 2px solid yellow;

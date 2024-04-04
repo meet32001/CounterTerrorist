@@ -61,32 +61,18 @@ document.addEventListener("DOMContentLoaded", function () {
   // Append both model containers to the main container
   modelDiv.appendChild(ctModelContainer);
   ctModelContainer.setAttribute("id", "ctModel");
+
   modelDiv.appendChild(tModelContainer);
+  tModelContainer.setAttribute("id", "tModel");
 
   // Append the main container to the document body
   document.body.appendChild(modelDiv);
 
   //Start of Auto button
   var autobtn = document.createElement("button");
-  autobtn.classList.add("autobtn");
+  autobtn.setAttribute("id", "autobtn");
   autobtn.textContent = "Auto Select";
   modelDiv.append(autobtn);
-
-  // Add event listener to the autobtn
-  autobtn.addEventListener("click", function () {
-    // Generate a random number (0 or 1)
-    var random = Math.floor(Math.random() * 2);
-
-    // If the random number is 0, select the Counter-Terrorist model
-    // Otherwise, select the Terrorist model
-    if (random === 0) {
-      ctModelContainer.classList.add("selected");
-      tModelContainer.classList.remove("selected");
-    } else {
-      tModelContainer.classList.add("selected");
-      ctModelContainer.classList.remove("selected");
-    }
-  });
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -95,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
   clickSound.src = "../asset/mixkit-classic-click-1117.wav";
 
   // Add event listener to all elements with the class "teamDiv" and "autobtn"
-  var clickableElements = document.querySelectorAll(".teamDiv, .autobtn");
+  var clickableElements = document.querySelectorAll(".teamDiv, #autobtn");
   clickableElements.forEach(function (element) {
     element.addEventListener("click", function () {
       // Create new audio element
@@ -111,7 +97,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Store reference to the new audio as ongoing audio
       backgroundAudio = audioClick;
-      audioClick.addEventListener('ended', function () {
+      localStorage.setItem("clickedDivId", this.id);
+
+      audioClick.addEventListener("ended", function () {
+        // Retrieve the id from localStorage
+        var clickedDivId = localStorage.getItem("clickedDivId");
+
+        // Select the element with that id
+        var clickedElement = document.getElementById(clickedDivId);
+
+        // Add the class to the selected element
+        if (clickedElement) {
+          clickedElement.classList.add("selected");
+        }
         window.location.href = "../PlayerSelector.html";
       });
     });
