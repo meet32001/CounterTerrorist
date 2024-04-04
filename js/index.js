@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Additional functionality here (e.g., starting the game or loading resources)
       loadingBar.style.visibility = "hidden"; // Hide the loading bar after loading
       loadingBar.classList.remove("loading"); // Remove loading animation
-      window.location.href = "BulletWave - team.html";
+      window.location.href = "TeamSelector.html";
     }, 3000); // 3000 milliseconds = 3 seconds
   });
 });

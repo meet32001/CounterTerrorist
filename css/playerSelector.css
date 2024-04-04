@@ -1,0 +1,21 @@
+/* Start of PlayerSelector css */
+
+.PlayerSelector {
+  border: 2px solid yellow;
+  width: 97.5%;
+  gap: 3rem;  
+  padding: 1rem;
+  display: flex; /* Change this to flex */
+  justify-content: center; /* Add this line to center the items horizontally */
+  align-items: center; /* Add this line to center the items vertically */
+  flex-wrap: wrap;
+  overflow: auto;
+}
+
+.player{
+  border: 2px solid yellow;
+  width: 30rem;
+  height: 40rem;
+}
+
+
