@@ -76,10 +76,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Preload the click sound
-  var clickSound = new Audio();
-  clickSound.src = "../asset/mixkit-classic-click-1117.wav";
-
   // Add event listener to all elements with the class "teamDiv" and "autobtn"
   var clickableElements = document.querySelectorAll(".teamDiv, #autobtn");
   clickableElements.forEach(function (element) {
@@ -99,17 +95,25 @@ document.addEventListener("DOMContentLoaded", function () {
       backgroundAudio = audioClick;
       localStorage.setItem("clickedDivId", this.id);
 
+       // Retrieve the id from localStorage
+       var clickedDivId = localStorage.getItem("clickedDivId");
+
+       // Select the element with that id
+       var clickedElement = document.getElementById(clickedDivId);
+
+       // Add the class to the selected element
+       if (clickedElement.id === "autobtn") {
+         var random = Math.floor(Math.random() * 2);
+         console.log(random);
+         localStorage.setItem("random", random);
+       }
+       else {
+         clickedElement.classList.add("selected");
+         console.log(clickedElement);
+       }
+
       audioClick.addEventListener("ended", function () {
-        // Retrieve the id from localStorage
-        var clickedDivId = localStorage.getItem("clickedDivId");
-
-        // Select the element with that id
-        var clickedElement = document.getElementById(clickedDivId);
-
-        // Add the class to the selected element
-        if (clickedElement) {
-          clickedElement.classList.add("selected");
-        }
+       
         window.location.href = "../PlayerSelector.html";
       });
     });

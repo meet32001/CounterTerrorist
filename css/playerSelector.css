@@ -7,13 +7,14 @@
 body {
   background-color: black;
   font-family: myFirstFont;
+  color: white;
   width: 100%;
   height: 72.3rem;
   position: relative;
 }
 
 .PlayerSelector {
-  border: 2px solid yellow;
+  /* border: 2px solid yellow; */
   width: 97.5%;
   gap: 3rem;  
   padding: 1rem;
@@ -24,10 +25,32 @@ body {
   overflow: auto;
 }
 
-.player{
-  border: 2px solid yellow;
+.player {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 30rem;
-  height: 40rem;
+  height: 34rem;
+  background-color: #2c3e50; /* Dark blue */
+  color: #ecf0f1; /* Light gray */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Shadow for 3D effect */
+  transition: transform 0.3s ease-in-out; /* Smooth transform transition */
+}
+
+.player img {
+  width: 95%;
+}
+
+.player:hover {
+  transform: scale(1.05); /* Slightly enlarge the player div on hover */
+}
+
+.player > p {
+  margin-top: 3rem;
+  font-size: 1.5rem;
+  color: #bdc3c7; /* Lighter gray for contrast */
 }
 
 

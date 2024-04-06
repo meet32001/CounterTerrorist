@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  var clickedDivId = localStorage.getItem('clickedDivId');
-    console.log(clickedDivId);
-
   var backgroundAudio = document.createElement("audio");
   backgroundAudio.setAttribute("autoplay", "");
   backgroundAudio.setAttribute("id", "backgroundAudio");
@@ -15,6 +12,22 @@ document.addEventListener("DOMContentLoaded", function () {
   backgroundAudio.appendChild(source);
   document.body.appendChild(backgroundAudio);
 
+  var clickedDivId = localStorage.getItem("clickedDivId");
+
+  let apiTeamCategory;
+
+  switch (clickedDivId) {
+    case "autobtn":
+      const random = localStorage.getItem("random");
+      apiTeamCategory = random == 0 ? "Counter-Terrorist" : "Terrorist";
+      break;
+    case "ctModel":
+      apiTeamCategory = "Counter-Terrorist";
+      break;
+    default:
+      apiTeamCategory = "Terrorist";
+  }
+
   // Replace 'en' with the desired language
   var nameurl = "https://randomuser.me/api/";
   var agenturl = "https://bymykel.github.io/CSGO-API/api/en/agents.json";
@@ -24,40 +37,75 @@ document.addEventListener("DOMContentLoaded", function () {
   PlayerSelector.classList.add("PlayerSelector");
   document.body.append(PlayerSelector);
 
-  // fetch(nameurl)
-  //   .then((response) => response.json()) // Parse the data as JSON
-  //   .then((data) => {
-  //     console.log(data); // Do something with the data
-  //   })
-  //   .catch((error) => {
-  //     console.error("Error:", error); // Handle any errors
-  //   });
+  fetch(nameurl)
+    .then((response) => response.json()) // Parse the data as JSON
+    .then((data) => {
+      console.log(data); // Do something with the data
+    })
+    .catch((error) => {
+      console.error("Error:", error); // Handle any errors
+    });
 
-//   fetch(agenturl)
-//     .then((response) => response.json()) // Parse the data as JSON
-//     .then((data) => {
-//       // Use a for loop to iterate over the data
-//       for (let i = 0; i < data.length; i++) {
-//         // Log some properties of each item
-//         console.log(`Id: ${data[i].id}`);
-//         console.log(`Image: ${data[i].image}`);
-//         console.log(`Name: ${data[i].name}`);
-//         console.log(`Team: ${data[i].team.id}`);
-//         console.log(`Description: ${data[i].description}`);
+  fetch(agenturl)
+    .then((response) => response.json()) // Parse the data as JSON
+    .then((data) => {
+      let terroristData = data.filter(
+        (item) => item.team.name === apiTeamCategory
+      );
 
-//         var player = document.createElement("div");
-//         player.classList.add("player");
-//         PlayerSelector.appendChild(player);
+      // Use a for loop to iterate over the data
+      terroristData.forEach((element) => {
+        var playerId = element.id;
 
-//         // Create an img element and set its src attribute to the image URL
-//         var img = document.createElement("img");
-//         img.src = data[i].image;
+        var player = document.createElement("div");
+        player.classList.add("player");
+        PlayerSelector.appendChild(player);
 
-//         // Append the img element to the body
-//         player.appendChild(img);
-//       }
-//     })
-//     .catch((error) => {
-//       console.error("Error:", error); // Handle any errors
-//     });
+        var img = document.createElement("img");
+        img.src = element.image;
+        player.appendChild(img);
+
+        var playerName = document.createElement("p");
+        playerName.textContent = element.rarity.name;
+        player.appendChild(playerName);
+
+        // Add a click event listener to the player div
+        player.addEventListener("click", function () {
+          var audioClick = new Audio();
+
+          audioClick.src = "../asset/mixkit-classic-click-1117.wav";
+          audioClick.play();
+
+          // Decrease volume of ongoing audio (if it exists)
+          if (backgroundAudio) {
+            backgroundAudio.volume = 0.5; // Adjust volume as needed
+          }
+
+          // Store reference to the new audio as ongoing audio
+          backgroundAudio = audioClick;
+          //   console.log(playerId);
+
+          var randomAgents = [playerId];
+          while (randomAgents.length < 4) {
+            var randomIndex = Math.floor(Math.random() * terroristData.length);
+            var randomAgentId = terroristData[randomIndex].id;
+
+            // Only add the random agent ID if it's not already in the array
+            if (!randomAgents.includes(randomAgentId)) {
+              randomAgents.push(randomAgentId);
+            }
+          }
+
+          // Store the IDs of the random agents in local storage
+          localStorage.setItem("randomAgentIds", JSON.stringify(randomAgents));
+
+          audioClick.addEventListener("ended", function () {
+            window.location.href = "../TeamForm.html";
+          });
+        });
+      });
+    })
+    .catch((error) => {
+      console.error("Error:", error); // Handle any errors
+    });
 });
