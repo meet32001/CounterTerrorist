@@ -1,17 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  var backgroundAudio = document.createElement("audio");
-  backgroundAudio.setAttribute("autoplay", "");
-  backgroundAudio.setAttribute("id", "backgroundAudio");
-  backgroundAudio.loop = true;
-
-  var source = document.createElement("source");
-  source.setAttribute(
-    "src",
-    "../asset/02 Counter-Strike - Global Offensive Theme 2.mp3"
-  );
-  backgroundAudio.appendChild(source);
-  document.body.appendChild(backgroundAudio);
-
   //Start of selectedplayerDetails Div
   var selectedplayerDetails = document.createElement("div");
   selectedplayerDetails.classList.add("selectedplayerDetails");
@@ -58,10 +45,11 @@ document.addEventListener("DOMContentLoaded", function () {
   Weaponsbtn.textContent = "Choose Weapons";
   Weaponsbtn.setAttribute("id", "Weaponsbtn");
   document.body.append(Weaponsbtn);
-  
+
   Weaponsbtn.addEventListener("click", function (event) {
     handleClickEvent(true);
   });
+
   var nameurl = "https://randomuser.me/api/";
   var agenturl = "https://bymykel.github.io/CSGO-API/api/en/agents.json";
 
@@ -155,33 +143,40 @@ document.addEventListener("DOMContentLoaded", function () {
       if (isTeamName) {
         teamNameHeading.textContent = "Team: " + agentUsernameInput.value;
       } else {
-        agentName.textContent = "Name: " + agentUsernameInput.value; 
+        agentName.textContent = "Name: " + agentUsernameInput.value;
       }
       handleClickEvent();
+      validateInputs(agentUsernameInput);
     });
 
     inputDiv.appendChild(agentUsernameLabel);
     inputDiv.appendChild(agentUsernameInput);
     inputDiv.appendChild(submitButton);
   }
-});
 
-function handleClickEvent(isweapon = false) {
-  var audioClick = new Audio();
-  audioClick.src = "../asset/mixkit-classic-click-1117.wav";
-  audioClick.play();
+  function handleClickEvent(isweapon = false) {
+    var audioClick = new Audio();
+    audioClick.src = "../asset/mixkit-classic-click-1117.wav";
+    audioClick.play();
 
-  // Decrease volume of ongoing audio (if it exists)
-  if (backgroundAudio) {
-    backgroundAudio.volume = 0.5; // Adjust volume as needed
-  }
+    // Decrease volume of ongoing audio (if it exists)
+    if (backgroundAudio) {
+      backgroundAudio.volume = 0.5; // Adjust volume as needed
+    }
 
-  // Store reference to the new audio as ongoing audio
-  backgroundAudio = audioClick;
+    // Store reference to the new audio as ongoing audio
+    backgroundAudio = audioClick;
 
-  if (isweapon) {
     audioClick.addEventListener("ended", function () {
-      // window.location.href = "../TeamForm.html";
+      if (isweapon) {
+        // window.location.href = "../TeamForm.html";
+      }
     });
   }
-}
+
+  function validateInputs(inputElements) {
+    if (inputElements.value.trim() === "") {
+      alert("Please fill out all fields.");
+    }
+  }
+});
