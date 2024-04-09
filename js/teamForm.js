@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
     handleClickEvent(true);
   });
 
-  var nameurl = "https://randomuser.me/api/";
+  // var nameurl = "https://randomuser.me/api/";
   var agenturl = "https://bymykel.github.io/CSGO-API/api/en/agents.json";
 
   //   fetch(nameurl)
@@ -78,9 +78,9 @@ document.addEventListener("DOMContentLoaded", function () {
       // Handle the selected agents
       selectedAgents.forEach((agent) => {
         img.src = agent.image;
-        agentName.textContent = "Name ";
-        agentDescription.textContent = "Description " + agent.description;
-        agentRarity.textContent = "Rarity " + agent.rarity.name;
+        agentName.textContent = "Name: " ;
+        agentDescription.textContent = agent.description;
+        agentRarity.textContent = agent.rarity.name;
         selectedplayerDetails.appendChild(img);
         selectedplayerDetails.appendChild(agentName);
         selectedplayerDetails.appendChild(agentRarity);
@@ -105,11 +105,11 @@ document.addEventListener("DOMContentLoaded", function () {
         randomPlayer.appendChild(img1);
 
         var agentName = document.createElement("p");
-        agentName.textContent = "Name " + agent.name;
+        agentName.textContent = agent.name;
         randomPlayer.appendChild(agentName);
 
         var agentRarity = document.createElement("p");
-        agentRarity.textContent = "Rarity " + agent.rarity.name;
+        agentRarity.textContent = agent.rarity.name;
         randomPlayer.appendChild(agentRarity);
       });
     })
@@ -142,8 +142,10 @@ document.addEventListener("DOMContentLoaded", function () {
     submitButton.addEventListener("click", function (event) {
       if (isTeamName) {
         teamNameHeading.textContent = "Team: " + agentUsernameInput.value;
+        localStorage.setItem("teamName", agentUsernameInput.value);
       } else {
         agentName.textContent = "Name: " + agentUsernameInput.value;
+        localStorage.setItem("agentName", agentUsernameInput.value);
       }
       handleClickEvent();
       validateInputs(agentUsernameInput);
@@ -169,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     audioClick.addEventListener("ended", function () {
       if (isweapon) {
-        // window.location.href = "../TeamForm.html";
+        window.location.href = "../weapon.html";
       }
     });
   }

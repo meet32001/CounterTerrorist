@@ -7,12 +7,15 @@ document.addEventListener("DOMContentLoaded", function () {
     case "autobtn":
       const random = localStorage.getItem("random");
       apiTeamCategory = random == 0 ? "Counter-Terrorist" : "Terrorist";
+      localStorage.setItem("apiTeamCategory", apiTeamCategory);
       break;
     case "ctModel":
       apiTeamCategory = "Counter-Terrorist";
+      localStorage.setItem("apiTeamCategory",apiTeamCategory);
       break;
     default:
       apiTeamCategory = "Terrorist";
+      localStorage.setItem("apiTeamCategory",apiTeamCategory);
   }
 
   // Replace 'en' with the desired language

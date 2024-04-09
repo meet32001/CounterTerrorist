@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
   setTimeout(function () {
     h1.style.visibility = "visible";
     h1.classList.add("animated");
-  }, 6000);
+  }, 6100);
 
   a.addEventListener("click", function () {
     loadingBar.style.visibility = "visible";
