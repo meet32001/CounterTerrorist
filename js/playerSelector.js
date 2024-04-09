@@ -22,6 +22,12 @@ document.addEventListener("DOMContentLoaded", function () {
   var nameurl = "https://randomuser.me/api/";
   var agenturl = "https://bymykel.github.io/CSGO-API/api/en/agents.json";
 
+  //Start of teamHeading heading
+  var teamHeading = document.createElement("h1");
+  teamHeading.classList.add("teamHeading");
+  teamHeading.textContent=apiTeamCategory;
+  document.body.append(teamHeading);
+
   //Start of PlayerSelector Div
   var PlayerSelector = document.createElement("div");
   PlayerSelector.classList.add("PlayerSelector");
