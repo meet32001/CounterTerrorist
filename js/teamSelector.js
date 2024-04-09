@@ -1,30 +1,31 @@
+ // Function to create a 3D model container
+ function create3DModelContainer(imageSrc, altText, text,containerId) {
+  // Create container div
+  var container = document.createElement("div");
+  container.classList.add("teamDiv");
+  container.setAttribute("id", containerId);
+
+  // Create image element
+  var image = document.createElement("img");
+  image.src = imageSrc;
+  image.alt = altText;
+
+  // Create text element
+  var paragraph = document.createElement("p");
+  paragraph.classList.add("teamDivText");
+  paragraph.textContent = text;
+
+  // Append image and text to the container
+  container.appendChild(image);
+  container.appendChild(paragraph);
+
+  return container;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   // Create div element
   var div = document.createElement("div");
   document.body.append(div);
-
-  // Function to create a 3D model container
-  function create3DModelContainer(imageSrc, altText, text) {
-    // Create container div
-    var container = document.createElement("div");
-    container.classList.add("teamDiv");
-
-    // Create image element
-    var image = document.createElement("img");
-    image.src = imageSrc;
-    image.alt = altText;
-
-    // Create text element
-    var paragraph = document.createElement("p");
-    paragraph.classList.add("teamDivText");
-    paragraph.textContent = text;
-
-    // Append image and text to the container
-    container.appendChild(image);
-    container.appendChild(paragraph);
-
-    return container;
-  }
 
   // Create the main container
   var modelDiv = document.createElement("div");
@@ -34,22 +35,21 @@ document.addEventListener("DOMContentLoaded", function () {
   var ctModelContainer = create3DModelContainer(
     "asset/anti-terrorism-day-background-stop-the-war-with-counter-terrorism-team-generative-ai-photo.jpeg",
     "Counter Terrorist 3d Model",
-    "Counter Terrorist"
+    "Counter Terrorist",
+    "ctModel"
   );
 
   // Create the second 3D model container
   var tModelContainer = create3DModelContainer(
     "asset/istockphoto-924055190-612x612.jpg",
     "Terrorist 3d Model",
-    "Terrorist"
+    "Terrorist",
+    "tModel"
   );
 
   // Append both model containers to the main container
   modelDiv.appendChild(ctModelContainer);
-  ctModelContainer.setAttribute("id", "ctModel");
-
   modelDiv.appendChild(tModelContainer);
-  tModelContainer.setAttribute("id", "tModel");
 
   // Append the main container to the document body
   document.body.appendChild(modelDiv);

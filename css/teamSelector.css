@@ -3,7 +3,7 @@ body {
   width: 100%;
   height: 72.3rem;
   position: relative;
-  overflow:hidden;
+  overflow: hidden;
 }
 
 .teamSelectorDiv {
@@ -69,10 +69,9 @@ body {
 }
 
 #autobtn {
-  
   font-family: myFirstFont;
   position: absolute;
-  top:90%;
+  top: 87%;
   left: 37%;
   width: 35rem;
   height: 4.5rem;
@@ -89,6 +88,6 @@ body {
   transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
-.autobtn:hover {
+#autobtn:hover {
   transform: scale(1.15); /* Add scale effect on hover */
 }

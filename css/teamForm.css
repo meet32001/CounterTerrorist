@@ -1,14 +1,7 @@
-/* Start of PlayerSelector css */
-@font-face {
-  font-family: myFirstFont;
-  src: url(../asset/cs_regular.ttf);
-}
-
 body {
   padding: 1rem;
   /* border: 2px solid yellow; */
   background-color: black;
-  font-family: myFirstFont;
   color: white;
   width: 98%;
   height: 70rem;
