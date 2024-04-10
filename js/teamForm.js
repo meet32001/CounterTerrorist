@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
+  let playerName = false;
+  let TeamName = false;
   //Start of selectedplayerDetails Div
   var selectedplayerDetails = document.createElement("div");
   selectedplayerDetails.classList.add("selectedplayerDetails");
@@ -46,21 +48,8 @@ document.addEventListener("DOMContentLoaded", function () {
   Weaponsbtn.setAttribute("id", "Weaponsbtn");
   document.body.append(Weaponsbtn);
 
-  Weaponsbtn.addEventListener("click", function (event) {
-    handleClickEvent(true);
-  });
-
   // var nameurl = "https://randomuser.me/api/";
   var agenturl = "https://bymykel.github.io/CSGO-API/api/en/agents.json";
-
-  //   fetch(nameurl)
-  //     .then((response) => response.json()) // Parse the data as JSON
-  //     .then((data) => {
-  //       console.log(data); // Do something with the data
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error:", error); // Handle any errors
-  //     });
 
   // Get the agent IDs from local storage
   var agentIds = JSON.parse(localStorage.getItem("randomAgentIds"));
@@ -78,9 +67,15 @@ document.addEventListener("DOMContentLoaded", function () {
       // Handle the selected agents
       selectedAgents.forEach((agent) => {
         img.src = agent.image;
-        agentName.textContent = "Name: " ;
-        agentDescription.textContent = agent.description;
-        agentRarity.textContent = agent.rarity.name;
+        agentName.textContent = "Name: ";
+        agentDescription.textContent =
+          "Description: " +
+          agent.description.substring(
+            0,
+            Math.floor(agent.description.length / 2)
+          );
+        agentDescription.style.textAlign = "justify";
+        agentRarity.textContent = "Rarity: " + agent.rarity.name;
         selectedplayerDetails.appendChild(img);
         selectedplayerDetails.appendChild(agentName);
         selectedplayerDetails.appendChild(agentRarity);
@@ -89,13 +84,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Get the other agent IDs from local storage
       var otherAgentIds = agentIds.slice(1);
+      // console.log(otherAgentIds);
 
       // Filter the agents based on the other agent IDs from local storage
       var otherAgents = allAgents.filter((agent) =>
         otherAgentIds.includes(agent.id)
       );
 
-      otherAgents.forEach((agent) => {
+      otherAgents.forEach((agent, index) => {
         var randomPlayer = document.createElement("div");
         randomPlayer.classList.add("randomPlayer");
         randomplayersDiv.append(randomPlayer);
@@ -140,15 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
     submitButton.setAttribute("id", "submitButton");
 
     submitButton.addEventListener("click", function (event) {
-      if (isTeamName) {
-        teamNameHeading.textContent = "Team: " + agentUsernameInput.value;
-        localStorage.setItem("teamName", agentUsernameInput.value);
-      } else {
-        agentName.textContent = "Name: " + agentUsernameInput.value;
-        localStorage.setItem("agentName", agentUsernameInput.value);
-      }
-      handleClickEvent();
-      validateInputs(agentUsernameInput);
+      handleClickEvent(false, isTeamName, agentUsernameInput);
     });
 
     inputDiv.appendChild(agentUsernameLabel);
@@ -156,7 +144,41 @@ document.addEventListener("DOMContentLoaded", function () {
     inputDiv.appendChild(submitButton);
   }
 
-  function handleClickEvent(isweapon = false) {
+  function handleClickEvent(isweapon = false, isTeamName, agentUsernameInput) {
+    clickSound();
+    const value = agentUsernameInput.value.trim();
+    const words = value.split(" ");
+
+    if (value === "") {
+      alert("Please enter a value.");
+      return false; // Return false if the input is empty
+    } else if (words.length > 2) {
+      alert("Please enter only two words.");
+      return false; // Return false if there are more than two words
+    } else {
+      if (isTeamName) {
+        playerName = true;
+        teamNameHeading.textContent = `Team: ${value}`;
+        localStorage.setItem("teamName", value);
+      } else {
+        TeamName = true;
+        agentName.textContent = `Name: ${value}`;
+        localStorage.setItem("agentName", value);
+      }
+      return true; // Return true if the input is valid
+    }
+  }
+
+  Weaponsbtn.addEventListener("click", function (event) {
+    clickSound();
+    if (playerName && TeamName) {
+      window.location.href = "../weapon.html";
+    } else {
+      alert("Please enter a value.");
+    }
+  });
+
+  function clickSound() {
     var audioClick = new Audio();
     audioClick.src = "../asset/mixkit-classic-click-1117.wav";
     audioClick.play();
@@ -168,17 +190,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Store reference to the new audio as ongoing audio
     backgroundAudio = audioClick;
-
-    audioClick.addEventListener("ended", function () {
-      if (isweapon) {
-        window.location.href = "../weapon.html";
-      }
-    });
-  }
-
-  function validateInputs(inputElements) {
-    if (inputElements.value.trim() === "") {
-      alert("Please fill out all fields.");
-    }
   }
 });

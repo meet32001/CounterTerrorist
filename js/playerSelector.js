@@ -1,31 +1,35 @@
 document.addEventListener("DOMContentLoaded", function () {
   var clickedDivId = localStorage.getItem("clickedDivId");
 
-  let apiTeamCategory;
+  let apiTeamCategory, oppositeTeamCategory;
 
   switch (clickedDivId) {
     case "autobtn":
       const random = localStorage.getItem("random");
       apiTeamCategory = random == 0 ? "Counter-Terrorist" : "Terrorist";
+      oppositeTeamCategory = random == 0 ? "Terrorist" : "Counter-Terrorist";
       localStorage.setItem("apiTeamCategory", apiTeamCategory);
+      localStorage.setItem("oppositeTeamCategory", oppositeTeamCategory);
       break;
     case "ctModel":
       apiTeamCategory = "Counter-Terrorist";
-      localStorage.setItem("apiTeamCategory",apiTeamCategory);
+      oppositeTeamCategory = "Terrorist";
+      localStorage.setItem("apiTeamCategory", apiTeamCategory);
+      localStorage.setItem("oppositeTeamCategory", oppositeTeamCategory);
       break;
     default:
       apiTeamCategory = "Terrorist";
-      localStorage.setItem("apiTeamCategory",apiTeamCategory);
+      oppositeTeamCategory = "Counter-Terrorist";
+      localStorage.setItem("apiTeamCategory", apiTeamCategory);
+      localStorage.setItem("oppositeTeamCategory", oppositeTeamCategory);
   }
 
-  // Replace 'en' with the desired language
-  var nameurl = "https://randomuser.me/api/";
   var agenturl = "https://bymykel.github.io/CSGO-API/api/en/agents.json";
 
   //Start of teamHeading heading
   var teamHeading = document.createElement("h1");
   teamHeading.classList.add("teamHeading");
-  teamHeading.textContent=apiTeamCategory;
+  teamHeading.textContent = apiTeamCategory;
   document.body.append(teamHeading);
 
   //Start of PlayerSelector Div
@@ -33,21 +37,20 @@ document.addEventListener("DOMContentLoaded", function () {
   PlayerSelector.classList.add("PlayerSelector");
   document.body.append(PlayerSelector);
 
-  fetch(nameurl)
-    .then((response) => response.json()) // Parse the data as JSON
-    .then((data) => {
-      console.log(data); // Do something with the data
-    })
-    .catch((error) => {
-      console.error("Error:", error); // Handle any errors
-    });
-
   fetch(agenturl)
     .then((response) => response.json()) // Parse the data as JSON
     .then((data) => {
       let terroristData = data.filter(
         (item) => item.team.name === apiTeamCategory
       );
+
+      let oppTeamAgentData = data.filter(
+        (item) => item.team.name === oppositeTeamCategory
+      );
+      
+      oppTeamAgentData.sort(() => Math.random() - 0.5);
+      var selectedOppAgents = oppTeamAgentData.slice(0, 4);
+      localStorage.setItem("oppTeamAgentData", JSON.stringify(selectedOppAgents));
 
       // Use a for loop to iterate over the data
       terroristData.forEach((element) => {

@@ -90,12 +90,12 @@ document.addEventListener("DOMContentLoaded", function () {
        // Add the class to the selected element
        if (clickedElement.id === "autobtn") {
          var random = Math.floor(Math.random() * 2);
-         console.log(random);
+        //  console.log(random);
          localStorage.setItem("random", random);
        }
        else {
          clickedElement.classList.add("selected");
-         console.log(clickedElement);
+        //  console.log(clickedElement);
        }
 
       audioClick.addEventListener("ended", function () {
