@@ -5,7 +5,8 @@ function getRandomMultipleOfFive(min, max) {
   return Math.floor(random / 5) * 5; // Ensure result is a multiple of 5
 }
 
-function swtichFunction(categoryName) {
+function swtichFunction(categoryName, matchingData) {
+  let price;
   // Switch case for 6 categories
   switch (categoryName) {
     case "Pistols":
@@ -15,35 +16,39 @@ function swtichFunction(categoryName) {
     case "Knives":
     case "Gloves":
       // Create a random number for each weapon of each category
-      filteredData.forEach((agent) => {
-        let weponprice;
+      matchingData.forEach((agent) => {
         switch (categoryName) {
           case "Pistols":
-            weponprice = getRandomMultipleOfFive(200, 700);
+            price = getRandomMultipleOfFive(200, 700);
             break;
           case "Rifles":
-            weponprice = getRandomMultipleOfFive(1500, 3500);
+            price = getRandomMultipleOfFive(1500, 3500);
             break;
           case "Heavy":
-            weponprice = getRandomMultipleOfFive(2500, 4500);
+            price = getRandomMultipleOfFive(2500, 4500);
             break;
           case "SMGs":
-            weponprice = getRandomMultipleOfFive(1000, 1500);
+            price = getRandomMultipleOfFive(1000, 1500);
             break;
           case "Knives":
-            weponprice = getRandomMultipleOfFive(100, 500);
+            price = getRandomMultipleOfFive(100, 500);
             break;
           case "Gloves":
-            weponprice = getRandomMultipleOfFive(100, 500);
+            price = getRandomMultipleOfFive(100, 500);
             break;
         }
-        agent.price = weponprice;
+        agent.price = price;
+        // console.log(agent.price);
       });
       break;
     default:
       console.log("Invalid category");
   }
-  return agent.price;
+  return price;
+}
+
+function displayClickedWeapons(clickedWeapons) {
+  console.log(clickedWeapons);
 }
 
 function clicksound() {
@@ -62,20 +67,7 @@ function clicksound() {
   backgroundAudio = audioClick;
 }
 
-function displayBalance(weaponCategoryDiv) {
-  var weaponbalance = 9000;
-  var weaponpara = document.createElement("div");
-  weaponpara.style.color = "white";
-  weaponpara.style.fontSize = "2rem";
-  weaponpara.style.zIndex = "1000";
-  weaponpara.classList = "weaponpara";
-  weaponpara.textContent = `Balance: ${weaponbalance}`;
-  weaponCategoryDiv.appendChild(weaponpara);
-  return weaponCategoryDiv;
-}
-
 document.addEventListener("DOMContentLoaded", function () {
-
   var agenturl = "https://bymykel.github.io/CSGO-API/api/en/skins.json";
 
   // Fetch all agents data
@@ -83,32 +75,87 @@ document.addEventListener("DOMContentLoaded", function () {
     .then((response) => response.json())
     .then((allAgents) => {
       // Create first div
-  var weaponCategoryDiv = document.createElement("div");
-  weaponCategoryDiv.classList = "weaponDisplayDivs"; // Set an id for the div
-  weaponCategoryDiv.id = "weaponCategoryDiv"; // Set an id for the div
-  document.body.appendChild(weaponCategoryDiv); // Append the div to the body
+      var weaponCategoryDiv = document.createElement("div");
+      weaponCategoryDiv.classList = "weaponDisplayDivs"; // Set an id for the div
+      weaponCategoryDiv.id = "weaponCategoryDiv"; // Set an id for the div
+      document.body.appendChild(weaponCategoryDiv); // Append the div to the body
 
-  displayBalance(weaponCategoryDiv);
+      let weaponbalance = 9000;
+      var weaponpara = document.createElement("div");
+      weaponpara.classList = "weaponpara";
+      weaponpara.textContent = `Balance: ${weaponbalance}`;
+      weaponCategoryDiv.appendChild(weaponpara);
 
-  // Create second div
-  var weaponDiv = document.createElement("div");
-  weaponDiv.classList = "weaponDisplayDivs"; // Set an id for the div
-  weaponDiv.id = "weaponDiv"; // Set an id for the div
-  document.body.appendChild(weaponDiv); // Append the div to the body
+      // Create second div
+      var weaponDiv = document.createElement("div");
+      weaponDiv.classList = "weaponDisplayDivs"; // Set an id for the div
+      weaponDiv.id = "weaponDiv"; // Set an id for the div
+      document.body.appendChild(weaponDiv); // Append the div to the body
 
-  var weaponSubcategoryDiv = document.createElement("div");
-  weaponSubcategoryDiv.classList = "weaponDisplayDivs";
-  weaponSubcategoryDiv.id = "weaponSubcategoryDiv";
-  weaponDiv.appendChild(weaponSubcategoryDiv);
+      var weaponSubcategoryDiv = document.createElement("div");
+      weaponSubcategoryDiv.classList = "weaponDisplayDivs";
+      weaponSubcategoryDiv.id = "weaponSubcategoryDiv";
+      weaponDiv.appendChild(weaponSubcategoryDiv);
 
-  var weaponSubcategoryPatternDiv = document.createElement("div");
-  weaponSubcategoryPatternDiv.classList = "weaponDisplayDivs";
-  weaponSubcategoryPatternDiv.id = "weaponSubcategoryPatternDiv";
-  weaponDiv.appendChild(weaponSubcategoryPatternDiv);
+      var weaponSubcategoryPatternDiv = document.createElement("div");
+      weaponSubcategoryPatternDiv.classList = "weaponDisplayDivs";
+      weaponSubcategoryPatternDiv.id = "weaponSubcategoryPatternDiv";
+      weaponDiv.appendChild(weaponSubcategoryPatternDiv);
 
       var processedCategories = new Set();
 
       var lastClickedButton = null;
+      // Initialize an object to store the weapon IDs by category
+      var weaponsByCategory = {};
+      var currentTeamWeapon = [];
+      var oppositeTeamWeapon = [];
+
+      // Fetch the weapon data from the API
+      fetch(agenturl)
+        .then((response) => response.json())
+        .then((data) => {
+          // Group the weapon IDs by category
+          data.forEach((weapon) => {
+            var category = weapon.category.name;
+            if (!weaponsByCategory[category]) {
+              weaponsByCategory[category] = [];
+            }
+            weaponsByCategory[category].push(weapon.id);
+          });
+
+          // Initialize seven empty arrays to store the weapon IDs
+          let weaponArrays = [[], [], [], [], [], [], [], []];
+
+          // For each array, randomly select a weapon ID from each category
+          for (var i = 0; i < 8; i++) {
+            for (var category in weaponsByCategory) {
+              if (weaponsByCategory[category].length > 0) {
+                var randomIndex = Math.floor(
+                  Math.random() * weaponsByCategory[category].length
+                );
+                var selectedWeaponId = weaponsByCategory[category].splice(
+                  randomIndex,
+                  1
+                )[0];
+                weaponArrays[i].push(selectedWeaponId);
+              }
+            }
+          }
+          // Create a new array that includes all elements from weaponArrays except the first one
+
+          for (var i = 1; i < weaponArrays.length; i++) {
+            if (i <= 3) {
+              currentTeamWeapon.push(weaponArrays[i]);
+            } else {
+              oppositeTeamWeapon.push(weaponArrays[i]);
+            }
+          }
+          // console.log(currentTeamWeapon);
+          // console.log(oppositeTeamWeapon);
+        });
+
+        localStorage.setItem("currentTeamWeapon", JSON.stringify(currentTeamWeapon));
+        localStorage.setItem("oppositeTeamWeapon", JSON.stringify(oppositeTeamWeapon));
 
       // Handle the selected agents
       allAgents.forEach((agent) => {
@@ -121,6 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var button = document.createElement("button");
             button.textContent = categoryName;
             button.className = "weaponCategoryButton";
+
             // console.log(categoryName);
             button.addEventListener("click", function () {
               var apiTeamCategory = localStorage.getItem("apiTeamCategory");
@@ -148,6 +196,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                   var processedWeapon = new Set();
                   weaponSubcategoryDiv.innerHTML = "";
+                  weaponSubcategoryPatternDiv.innerHTML = "";
+
                   // Log the pattern of each agent in the filtered data
                   filteredDataCategory.forEach((agent) => {
                     if (agent.weapon.name) {
@@ -160,13 +210,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         button.addEventListener("click", function () {
                           // console.log(agent.weapon.id);
-                          localStorage.setItem("subcategoryId", agent.weapon.id);
+                          localStorage.setItem(
+                            "subcategoryId",
+                            agent.weapon.id
+                          );
                           clicksound();
                           var matchingData = filteredDataCategory.filter(
                             (agent) => agent.weapon.name === this.textContent
                           );
 
                           weaponSubcategoryPatternDiv.innerHTML = "";
+
+                          let clickedWeapons = [];
 
                           matchingData.forEach((data) => {
                             var weaponDetails = document.createElement("div");
@@ -184,21 +239,36 @@ document.addEventListener("DOMContentLoaded", function () {
                             p.textContent = data.name.split(" | ")[1];
                             weaponDetails.appendChild(p);
 
-                            // var price = document.createElement("p");
-                            // price.textContent = `Price: $${agent.price}`;
-                            // weaponDetails.appendChild(price);
+                            let wepaonPrice = swtichFunction(
+                              categoryName,
+                              matchingData
+                            );
 
-                            weaponDetails.addEventListener("click", function () {
-                              clicksound();
-                              // localStorage.setItem("patternId", data.id);
-                              console.log(data.id);
-                            });
+                            var price = document.createElement("p");
+                            price.textContent = "Price: " + wepaonPrice;
+                            weaponDetails.appendChild(price);
+
+                            // Initialize the clickedWeapons array outside the click event handler
+
+                            weaponDetails.addEventListener(
+                              "click",
+                              function () {
+                                console.log(data.id);
+                                clicksound();
+                                weaponbalance = weaponbalance - wepaonPrice;
+                                if (weaponbalance < 0) {
+                                  alert("You don't have enough balance");
+                                  // weaponbalance = weaponbalance + wepaonPrice;
+                                } else {
+                                  weaponpara.textContent = `Balance: ${weaponbalance}`;
+                                }
+                              }
+                            );
                           });
+
                           // console.log(agent.pattern.name);
                         });
 
-                        // console.log(weaponName);
-                        
                         processedWeapon.add(weaponName);
                         weaponSubcategoryDiv.appendChild(button);
                       }
