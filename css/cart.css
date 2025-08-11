@@ -1,0 +1,143 @@
+body {
+  position: relative;
+  /* border: 2px solid yellow; */
+  width: 97.5%;
+  height: 58rem;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.headingDiv {
+  /* border: 2px solid green; */
+  width: 100%;
+  height: 2.5rem;
+  text-align: center;
+  font-size: 2rem;
+  font-family: myFirstFont;
+  color: white;
+}
+.otherTeambtn {
+  font-family: myFirstFont;
+  position: absolute;
+  top: 1rem;
+  right: 2rem;
+  background-color: #4caf50;
+  color: white;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.5rem;
+}
+
+.wholePlayerDiv {
+  position: absolute;
+  padding: 1rem;
+  /* border: 2px solid white; */
+  width: 46.5%;
+  height: 24rem;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.playerAgentDiv {
+  /* border: 2px solid green; */
+  width: 40%;
+  height: 100%;
+}
+
+.playerWeaponDiv {
+  /* border: 2px solid white; */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  /* border: 2px solid white; */
+  width: 60%;
+  height: 100%;
+  perspective: 1000px;
+  gap: 5px;
+}
+
+.playerAgentDiv > img {
+  /* border: 2px solid white; */
+  margin-top: 2rem;
+  width: 100%;
+  height: 80%;
+}
+
+.playerAgentDiv > img:hover {
+  transform: scale(1.1);
+}
+
+.playerWeaponDiv > img {
+  border: 2px solid white;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  width: 40%;
+  height: 8rem;
+}
+
+.playerWeaponDiv> img:hover {
+  transform: rotateY(180deg);
+}
+
+#wholePlayerDivId0 {
+  top: 5rem;
+  left: 1rem;
+}
+
+#wholePlayerDivId1 {
+  top: 5rem;
+  right: 1rem;
+}
+
+#wholePlayerDivId2 {
+  bottom: 1rem;
+  left: 1rem;
+}
+
+#wholePlayerDivId3 {
+  bottom: 1rem;
+  right: 1rem;
+}
+
+/* flip animation */
+
+/* .playerWeaponDiv { */
+/* ...rest of your styles
+  transform-style: preserve-3d;
+}
+
+.flip-container {
+  perspective: 1000px;
+}
+
+.flip-container:hover .flipper {
+  transform: rotateY(180deg);
+}
+
+.flipper {
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.front,
+.back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.front {
+  z-index: 2;
+  /* for firefox 31 */
+/* transform: rotateY(0deg);
+}
+
+.back {
+  transform: rotateY(180deg);
+} */

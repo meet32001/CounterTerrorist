@@ -47,10 +47,6 @@ function swtichFunction(categoryName, matchingData) {
   return price;
 }
 
-function displayClickedWeapons(clickedWeapons) {
-  console.log(clickedWeapons);
-}
-
 function clicksound() {
   // Create new audio element
   var audioClick = new Audio();
@@ -68,7 +64,7 @@ function clicksound() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  var agenturl = "https://bymykel.github.io/CSGO-API/api/en/skins.json";
+  var agenturl = "../asset/skins.json";
 
   // Fetch all agents data
   fetch(agenturl)
@@ -86,6 +82,10 @@ document.addEventListener("DOMContentLoaded", function () {
       weaponpara.textContent = `Balance: ${weaponbalance}`;
       weaponCategoryDiv.appendChild(weaponpara);
 
+      var cartbtn = document.createElement("button");
+      cartbtn.classList = "cartbtn";
+      cartbtn.textContent = "View Cart";
+
       // Create second div
       var weaponDiv = document.createElement("div");
       weaponDiv.classList = "weaponDisplayDivs"; // Set an id for the div
@@ -102,6 +102,10 @@ document.addEventListener("DOMContentLoaded", function () {
       weaponSubcategoryPatternDiv.id = "weaponSubcategoryPatternDiv";
       weaponDiv.appendChild(weaponSubcategoryPatternDiv);
 
+      var viewCartItem = document.createElement("h6");
+      viewCartItem.classList = "viewCartItem";
+      let viewCartAmount = 0;
+
       var processedCategories = new Set();
 
       var lastClickedButton = null;
@@ -109,6 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
       var weaponsByCategory = {};
       var currentTeamWeapon = [];
       var oppositeTeamWeapon = [];
+      var myPlayerWeapon = [];
 
       // Fetch the weapon data from the API
       fetch(agenturl)
@@ -150,12 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
               oppositeTeamWeapon.push(weaponArrays[i]);
             }
           }
-          // console.log(currentTeamWeapon);
-          // console.log(oppositeTeamWeapon);
         });
-
-        localStorage.setItem("currentTeamWeapon", JSON.stringify(currentTeamWeapon));
-        localStorage.setItem("oppositeTeamWeapon", JSON.stringify(oppositeTeamWeapon));
 
       // Handle the selected agents
       allAgents.forEach((agent) => {
@@ -169,7 +169,6 @@ document.addEventListener("DOMContentLoaded", function () {
             button.textContent = categoryName;
             button.className = "weaponCategoryButton";
 
-            // console.log(categoryName);
             button.addEventListener("click", function () {
               var apiTeamCategory = localStorage.getItem("apiTeamCategory");
               //   console.log(apiTeamCategory);
@@ -181,9 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
               button.classList.add("active");
               lastClickedButton = button;
-              // Handle button click
-              //   console.log("Clicked: " + categoryName);
-              // Fetch data from the API
+
               fetch(agenturl)
                 .then((response) => response.json())
                 .then((data) => {
@@ -198,7 +195,6 @@ document.addEventListener("DOMContentLoaded", function () {
                   weaponSubcategoryDiv.innerHTML = "";
                   weaponSubcategoryPatternDiv.innerHTML = "";
 
-                  // Log the pattern of each agent in the filtered data
                   filteredDataCategory.forEach((agent) => {
                     if (agent.weapon.name) {
                       var weaponName = agent.weapon.name;
@@ -221,16 +217,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                           weaponSubcategoryPatternDiv.innerHTML = "";
 
-                          let clickedWeapons = [];
-
                           matchingData.forEach((data) => {
                             var weaponDetails = document.createElement("div");
-                            weaponDetails.classList = "weaponDetails"; // Set a class for the div
+                            weaponDetails.classList = "weaponDetails";
                             weaponSubcategoryPatternDiv.appendChild(
                               weaponDetails
-                            ); //
+                            );
 
-                            // Create an img element
                             var img = document.createElement("img");
                             img.src = data.image;
                             weaponDetails.appendChild(img);
@@ -248,46 +241,70 @@ document.addEventListener("DOMContentLoaded", function () {
                             price.textContent = "Price: " + wepaonPrice;
                             weaponDetails.appendChild(price);
 
-                            // Initialize the clickedWeapons array outside the click event handler
-
                             weaponDetails.addEventListener(
                               "click",
                               function () {
-                                console.log(data.id);
+                                viewCartItem.style.visibility = "visible";
+                                viewCartItem.textContent = `${++viewCartAmount}`;
+                                myPlayerWeapon.push({
+                                  id: data.id,
+                                  category: data.category.name,
+                                });
+                                // console.log(myPlayerWeapon);
+
                                 clicksound();
                                 weaponbalance = weaponbalance - wepaonPrice;
                                 if (weaponbalance < 0) {
                                   alert("You don't have enough balance");
-                                  // weaponbalance = weaponbalance + wepaonPrice;
                                 } else {
                                   weaponpara.textContent = `Balance: ${weaponbalance}`;
                                 }
                               }
                             );
                           });
-
-                          // console.log(agent.pattern.name);
                         });
-
                         processedWeapon.add(weaponName);
                         weaponSubcategoryDiv.appendChild(button);
                       }
                     }
                   });
-
-                  // var filteredData = filteredData.filter((agent) =>
-                  // agent.weapon.name === categoryName &&
-                  //     (agent.team.name === apiTeamCategory ||
-                  //       agent.team.name === "Both Teams")
-                  // );
                 })
                 .catch((error) => console.error("Error:", error));
             });
-
-            // Append the button to the weaponCategoryDiv
             weaponCategoryDiv.appendChild(button);
+            weaponCategoryDiv.appendChild(cartbtn);
+            weaponCategoryDiv.appendChild(viewCartItem);
             processedCategories.add(categoryName);
           }
+        }
+      });
+
+      cartbtn.addEventListener("click", function () {
+        clicksound();
+        // console.log(myPlayerWeapon);
+
+        // Extract the category of each item in myPlayerWeapon
+        let categories = myPlayerWeapon.map((item) => item.category);
+
+        // Create a Set from the categories array
+        let uniqueCategories = new Set(categories);
+
+        if(uniqueCategories.size === 0){
+          alert("Please select at least one weapon.");
+        }
+        else if (uniqueCategories.size < 6) {
+          alert("Please select one weapon from each category.");
+        }
+        // Check if all categories are unique
+        else if(uniqueCategories.size === myPlayerWeapon.length) {
+          localStorage.setItem("myPlayerWeapon", JSON.stringify(myPlayerWeapon));
+          localStorage.setItem("currentTeamWeapon",JSON.stringify(currentTeamWeapon));
+          localStorage.setItem("oppositeTeamWeapon",JSON.stringify(oppositeTeamWeapon));
+          window.location.href = "cart.html";
+          // console.log("All items have unique categories.");
+        } else {
+          myPlayerWeapon=[];
+          alert("Please select only one weapon from each category.");
         }
       });
     })

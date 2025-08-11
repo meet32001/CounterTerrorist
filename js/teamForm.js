@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.body.append(Weaponsbtn);
 
   // var nameurl = "https://randomuser.me/api/";
-  var agenturl = "https://bymykel.github.io/CSGO-API/api/en/agents.json";
+  var agenturl = "../asset/agents.json";
 
   // Get the agent IDs from local storage
   var agentIds = JSON.parse(localStorage.getItem("randomAgentIds"));

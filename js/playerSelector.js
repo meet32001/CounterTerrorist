@@ -1,110 +1,129 @@
-document.addEventListener("DOMContentLoaded", function () {
-  var clickedDivId = localStorage.getItem("clickedDivId");
+document.addEventListener("DOMContentLoaded", async () => {
+  const clickedDivId = localStorage.getItem("clickedDivId");
+  const random = Number(localStorage.getItem("random"));
 
-  let apiTeamCategory, oppositeTeamCategory;
+  // Decide categories
+  let apiTeamCategory = "Terrorist";
+  let oppositeTeamCategory = "Counter-Terrorist";
 
-  switch (clickedDivId) {
-    case "autobtn":
-      const random = localStorage.getItem("random");
-      apiTeamCategory = random == 0 ? "Counter-Terrorist" : "Terrorist";
-      oppositeTeamCategory = random == 0 ? "Terrorist" : "Counter-Terrorist";
-      localStorage.setItem("apiTeamCategory", apiTeamCategory);
-      localStorage.setItem("oppositeTeamCategory", oppositeTeamCategory);
-      break;
-    case "ctModel":
-      apiTeamCategory = "Counter-Terrorist";
-      oppositeTeamCategory = "Terrorist";
-      localStorage.setItem("apiTeamCategory", apiTeamCategory);
-      localStorage.setItem("oppositeTeamCategory", oppositeTeamCategory);
-      break;
-    default:
-      apiTeamCategory = "Terrorist";
-      oppositeTeamCategory = "Counter-Terrorist";
-      localStorage.setItem("apiTeamCategory", apiTeamCategory);
-      localStorage.setItem("oppositeTeamCategory", oppositeTeamCategory);
+  if (clickedDivId === "autobtn") {
+    apiTeamCategory = random === 0 ? "Counter-Terrorist" : "Terrorist";
+    oppositeTeamCategory = random === 0 ? "Terrorist" : "Counter-Terrorist";
+  } else if (clickedDivId === "ctModel") {
+    apiTeamCategory = "Counter-Terrorist";
+    oppositeTeamCategory = "Terrorist";
   }
 
-  var agenturl = "https://bymykel.github.io/CSGO-API/api/en/agents.json";
+  localStorage.setItem("apiTeamCategory", apiTeamCategory);
+  localStorage.setItem("oppositeTeamCategory", oppositeTeamCategory);
 
-  //Start of teamHeading heading
-  var teamHeading = document.createElement("h1");
+  const agentUrl = "../asset/agents.json";
+
+  // Heading
+  const teamHeading = document.createElement("h1");
   teamHeading.classList.add("teamHeading");
   teamHeading.textContent = apiTeamCategory;
   document.body.append(teamHeading);
 
-  //Start of PlayerSelector Div
-  var PlayerSelector = document.createElement("div");
-  PlayerSelector.classList.add("PlayerSelector");
-  document.body.append(PlayerSelector);
+  // Container
+  const playerSelector = document.createElement("div");
+  playerSelector.classList.add("PlayerSelector");
+  document.body.append(playerSelector);
 
-  fetch(agenturl)
-    .then((response) => response.json()) // Parse the data as JSON
-    .then((data) => {
-      let terroristData = data.filter(
-        (item) => item.team.name === apiTeamCategory
-      );
+  // Utility: Fisher–Yates shuffle
+  const shuffle = (arr) => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
 
-      let oppTeamAgentData = data.filter(
-        (item) => item.team.name === oppositeTeamCategory
-      );
-      
-      oppTeamAgentData.sort(() => Math.random() - 0.5);
-      var selectedOppAgents = oppTeamAgentData.slice(0, 4);
-      localStorage.setItem("oppTeamAgentData", JSON.stringify(selectedOppAgents));
+  let backgroundAudio = null;
+  let navigated = false;
 
-      // Use a for loop to iterate over the data
-      terroristData.forEach((element) => {
-        var playerId = element.id;
+  try {
+    const res = await fetch(agentUrl, { cache: "no-store" });
+    if (!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
+    const data = await res.json();
 
-        var player = document.createElement("div");
-        player.classList.add("player");
-        PlayerSelector.appendChild(player);
+    const teamAgents = data.filter((item) => item.team?.name === apiTeamCategory);
+    const oppAgents = data.filter((item) => item.team?.name === oppositeTeamCategory);
 
-        var img = document.createElement("img");
-        img.src = element.image;
-        player.appendChild(img);
+    // Pick 4 random opponents
+    const selectedOppAgents = shuffle(oppAgents).slice(0, 4).map(a => ({
+      id: a.id,
+      name: a.name,
+      image: a.image
+    }));
+    localStorage.setItem("oppTeamAgentData", JSON.stringify(selectedOppAgents));
 
-        var playerName = document.createElement("p");
-        playerName.textContent = element.rarity.name;
-        player.appendChild(playerName);
+    // Render team agents
+    const frag = document.createDocumentFragment();
 
-        // Add a click event listener to the player div
-        player.addEventListener("click", function () {
-          var audioClick = new Audio();
+    teamAgents.forEach((agent) => {
+      const player = document.createElement("div");
+      player.classList.add("player");
 
-          audioClick.src = "../asset/mixkit-classic-click-1117.wav";
-          audioClick.play();
+      const img = document.createElement("img");
+      img.src = agent.image;
+      img.alt = agent.name || agent.rarity?.name || "Agent";
 
-          // Decrease volume of ongoing audio (if it exists)
-          if (backgroundAudio) {
-            backgroundAudio.volume = 0.5; // Adjust volume as needed
-          }
+      const playerName = document.createElement("p");
+      // Use the agent name; fall back to rarity
+      playerName.textContent = agent.name || agent.rarity?.name || "Unknown";
 
-          // Store reference to the new audio as ongoing audio
-          backgroundAudio = audioClick;
-          //   console.log(playerId);
+      player.append(img, playerName);
 
-          var randomAgents = [playerId];
-          while (randomAgents.length < 4) {
-            var randomIndex = Math.floor(Math.random() * terroristData.length);
-            var randomAgentId = terroristData[randomIndex].id;
+      player.addEventListener("click", async () => {
+        if (navigated) return; // prevent double clicks
+        navigated = true;
 
-            // Only add the random agent ID if it's not already in the array
-            if (!randomAgents.includes(randomAgentId)) {
-              randomAgents.push(randomAgentId);
-            }
-          }
+        // Lower background first
+        if (backgroundAudio) backgroundAudio.volume = 0.5;
 
-          // Store the IDs of the random agents in local storage
-          localStorage.setItem("randomAgentIds", JSON.stringify(randomAgents));
+        // Click sound
+        const audioClick = new Audio("../asset/mixkit-classic-click-1117.wav");
+        backgroundAudio = audioClick;
 
-          audioClick.addEventListener("ended", function () {
+        // Choose 3 more unique agents from the same team
+        const randomAgents = new Set([agent.id]);
+        while (randomAgents.size < 4 && randomAgents.size < teamAgents.length) {
+          const randomIndex = Math.floor(Math.random() * teamAgents.length);
+          randomAgents.add(teamAgents[randomIndex].id);
+        }
+
+        localStorage.setItem("randomAgentIds", JSON.stringify([...randomAgents]));
+
+        // Navigate after sound, with fallback
+        try {
+          await audioClick.play();
+          audioClick.addEventListener("ended", () => {
             window.location.href = "../TeamForm.html";
-          });
-        });
+          }, { once: true });
+          // Safety fallback in case 'ended' never fires
+          setTimeout(() => {
+            if (document.location.href.indexOf("TeamForm.html") === -1) {
+              window.location.href = "../TeamForm.html";
+            }
+          }, 1200);
+        } catch {
+          // If play() fails (e.g., blocked), navigate immediately
+          window.location.href = "../TeamForm.html";
+        }
       });
-    })
-    .catch((error) => {
-      console.error("Error:", error); // Handle any errors
+
+      frag.appendChild(player);
     });
+
+    playerSelector.appendChild(frag);
+  } catch (err) {
+    console.error("Error:", err);
+    // Optional: surface to UI
+    const msg = document.createElement("p");
+    msg.textContent = "Failed to load agents. Please try again.";
+    msg.style.color = "red";
+    document.body.append(msg);
+  }
 });
